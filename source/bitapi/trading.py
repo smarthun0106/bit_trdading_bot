@@ -166,7 +166,7 @@ class Trading(object):
     trading:
 
     '''
-    def trading(self, trading_strategy, strategy_name):
+    def trading(self, trading_strategy, strategy_name):]
         self.import_api_data()
 
         trading_strategy.name = strategy_name

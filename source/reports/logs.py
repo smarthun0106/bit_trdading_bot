@@ -1,3 +1,0 @@
-
-class Logs():
-    pass
