@@ -126,7 +126,7 @@ class MovingAverageStrategy(object):
             df['pattern_score'].iloc[0], df['location_score'].iloc[0],
             df['ps'].iloc[0], num_candles
         )
-        output3 = 'pprice: {0}'.format(df['close'].iloc[0])
+        output3 = 'pp: {0}'.format(df['close'].iloc[0])
         print(output1, output2, output3)
 
     ''' '''
