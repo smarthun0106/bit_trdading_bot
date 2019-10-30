@@ -11,10 +11,11 @@ class Logs(object):
         self.filled_history = filled_history
         self.strategy_name = strategy_name
 
-        print(self.strategy_name+ '.csv')
-        csv_file_path = "/csv_files/"
+
+        csv_file_path = "csv_files/"
         csv_file_name = self.strategy_name + '.csv'
         self.file_name = csv_file_path + csv_file_name
+        print(self.file_name)
 
     def __call__(self):
         pass
@@ -85,9 +86,8 @@ class Logs(object):
     def report(self):
         try:
             self.basic_logs()
-            df = pd.read_csv(self.file_name)
+            # df = pd.read_csv(self.file_name)
             df = pd.DataFrame(self.entry_logs)
-            print('1')
             df = self.change_korea_time(df)
             if self.check_report_content_duplicated():
                 return
