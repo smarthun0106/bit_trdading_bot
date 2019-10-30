@@ -1,10 +1,14 @@
 # modules in packages
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname( path.abspath(__file__))))
+
 if __name__ == '__main__':
     from basic_api import Public, Private
 else:
     from .basic_api import Public, Private
 from utility.utility import Utils
-from reports.logs import Logs
+from logs.logs import Logs
 
 # python moudles
 import time
@@ -68,6 +72,8 @@ class Trading(object):
 
     '''
     def stop_loss(self):
+        self.order_book_sell_price, self.order_book_buy_price = \
+                            self.public.current_order_book(self.symbol)
         if self.my_position['amount'] > 0:
             stop_price = self.my_position['price'] - self.stop_loss_unit_price
             if stop_price >= self.order_book_sell_price:
@@ -86,6 +92,8 @@ class Trading(object):
     It chase the order book till the strategy output position.
     '''
     def ordering(self):
+        self.order_book_sell_price, self.order_book_buy_price = \
+                            self.public.current_order_book(self.symbol)
         if self.my_order["position"] is "s":
             if self.my_order['price'] != self.order_book_sell_price:
                 self.private.cancel_order(self.symbol, self.my_order['id'])
@@ -111,76 +119,42 @@ class Trading(object):
         return
 
     '''
-    report_data:
-
+    logs:
 
     '''
-    def report_data(self, filled_history):
-        strategy_name = self.strategy_name
-        # entry order, make order name insted of order id
-        entry_order_id = filled_history[1]["orderID"]
-        entry_date = filled_history[1]["timestamp"]
-        entry_price = filled_history[1]["price"]
-        entry_side = filled_history[1]["side"]
-        entry_order_type = filled_history[1]["ordType"]
-
-        # close order
-        close_order_id = filled_history[0]["orderID"]
-        close_date = filled_history[0]["timestamp"]
-        close_price = filled_history[0]["price"]
-        close_order_type = filled_history[0]["ordType"]
-
-        # make dic type data
-        report_data = {
-            "strategy_name" : [strategy_name],
-            "entry_order_id" : [entry_order_id], "entry_date" : [entry_date],
-            "entry_price" : [entry_price], "entry_side" : [entry_side],
-            "entry_order_type" : [entry_order_type],
-            "close_order_id" : [close_order_id],  "close_date" : [close_date],
-            "close_price" : [close_price],
-            "close_order_type" : [close_order_type]
-        }
-
-        # get bot_signal that is trading from bot
+    def logs(self, strategy_name):
+        time.sleep(self.time_delay)
+        filled_history = self.private.filled_history()
         bot_text = 'Submitted via API.'
         history_text_01 = filled_history[1]['text']
         history_text_00 = filled_history[0]['text']
-
+        log = Logs(filled_history, strategy_name).csv_file_name()
         if bot_text is history_text_01:
             if bot_text is history_text_00:
-                bot_trading = True
-        else:
-            bot_trading = False
-        return report_data, bot_trading
+                log = Logs(filled_history, strategy_name).basic_logs()
+        return
 
+    '''
+    import data:
+
+    '''
     def import_api_data(self):
         self.my_position = self.private.position_status(self.symbol)
         time.sleep(self.time_delay)
         self.my_order = self.private.order_status(self.symbol)
         time.sleep(self.time_delay)
-        self.order_book_sell_price, self.order_book_buy_price = \
-                            self.public.current_order_book(self.symbol)
         return
 
     '''
     trading:
 
     '''
-    def trading(self, trading_strategy, strategy_name):]
+    def trading(self, trading_strategy, strategy_name):
         self.import_api_data()
-
-        trading_strategy.name = strategy_name
-        self.strategy_name = trading_strategy.name
-
         if self.my_order is None and self.my_position is None:
             position = trading_strategy['ps'].iloc[0]
             self.buy_sell(position)
-
-            filled_history = self.private.filled_history()
-            time.sleep(self.time_delay)
-            report_data, bot_trading = self.report_data(filled_history)
-            if bot_trading:
-                self.utils.report(report_data)
+            self.logs(strategy_name)
 
         elif self.my_order is not None and self.my_position is not None:
             self.stop_loss()

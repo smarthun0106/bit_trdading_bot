@@ -6,16 +6,18 @@ from strategy import strategies
 from pprint import pprint
 import time
 
-ma_strategy = strategies.MovingAverageStrategy(
+ma_strategy = strategies.MovingAverageStrategy01(
     symbol='XBT', interval='5m', lengths=[5],
     candle_count=5, short_pattern_value_k=0.8, long_pattern_value_k=0.2,
     time_delay=0.8, on_screen=True)
+strategy_name = ma_strategy.__class__.__name__
 
 trader = bitmex.Trading(
     symbol='XBT', amount=1, order_type='Limit',
     stop_type='Market',
     target_unit_price=20, stop_loss_unit_price=20,
     time_delay=0.5)
+
 
 switch = True
 if __name__ == '__main__':
@@ -24,11 +26,10 @@ if __name__ == '__main__':
             # strategy setting
             if switch:
                 trading_strategy = ma_strategy.present_position()
-                present_position = trading_strategy['ps'].iloc[0]
+                trading_position = trading_strategy['ps'].iloc[0]
 
-            if present_position is 'l' or present_position is 's':
-                my_order = trader.trading(
-                        trading_strategy, 'moving_average_position')
+            if trading_position is 'l' or trading_position is 's':
+                my_order = trader.trading(trading_strategy, strategy_name)
                 switch = False
                 if my_order is None :
                     switch = True

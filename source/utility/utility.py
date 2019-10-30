@@ -14,7 +14,7 @@ class Utils(object):
         return time_now[:-7]
 
     ''' telegram related: get url path included token '''
-    def telegram_sender(self, token):
+    def telegram_url_path(self, token):
         url = "https://api.telegram.org"
         path = "/bot{0}/sendMessage".format(token)
         url_path = url + path
@@ -27,7 +27,7 @@ class Utils(object):
         elif type is 'report':
             token = TELEGRAM_REPORT_BOT_TOKEN
 
-        url_path = self.telegram_sender(token)
+        url_path = self.telegram_url_path(token)
         parameters = { "chat_id" : "756052880", "text" : text }
         r = requests.get(url_path, params=parameters)
         return r
