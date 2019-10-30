@@ -41,6 +41,8 @@ class Trading(object):
 
     '''
     def buy_sell(self, position):
+        self.order_book_sell_price, self.order_book_buy_price = \
+                            self.public.current_order_book(self.symbol)
         if position is 's':
             self.private.create_order(
                         self.symbol, self.order_type, 'sell',
@@ -128,10 +130,9 @@ class Trading(object):
         bot_text = 'Submitted via API.'
         history_text_01 = filled_history[1]['text']
         history_text_00 = filled_history[0]['text']
-        log = Logs(filled_history, strategy_name).csv_file_name()
-        if bot_text is history_text_01:
-            if bot_text is history_text_00:
-                log = Logs(filled_history, strategy_name).basic_logs()
+        if bot_text == history_text_01:
+            if bot_text == history_text_00:
+                log = Logs(filled_history, strategy_name).report()
         return
 
     '''
@@ -149,12 +150,11 @@ class Trading(object):
     trading:
 
     '''
-    def trading(self, trading_strategy, strategy_name):
+    def trading(self, position, strategy_name):
         self.import_api_data()
         if self.my_order is None and self.my_position is None:
-            position = trading_strategy['ps'].iloc[0]
-            self.buy_sell(position)
             self.logs(strategy_name)
+            self.buy_sell(position)
 
         elif self.my_order is not None and self.my_position is not None:
             self.stop_loss()

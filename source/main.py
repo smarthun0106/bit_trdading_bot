@@ -1,6 +1,7 @@
 # my modules
 import bitapi.trading as bitmex
 from strategy import strategies
+from utility import utility
 
 # other modules
 from pprint import pprint
@@ -15,7 +16,7 @@ strategy_name = ma_strategy.__class__.__name__
 trader = bitmex.Trading(
     symbol='XBT', amount=1, order_type='Limit',
     stop_type='Market',
-    target_unit_price=20, stop_loss_unit_price=20,
+    target_unit_price=1, stop_loss_unit_price=1,
     time_delay=0.5)
 
 
@@ -24,15 +25,16 @@ if __name__ == '__main__':
     while True:
         try:
             # strategy setting
-            if switch:
-                trading_strategy = ma_strategy.present_position()
-                trading_position = trading_strategy['ps'].iloc[0]
-
-            if trading_position is 'l' or trading_position is 's':
-                my_order = trader.trading(trading_strategy, strategy_name)
+            # if switch:
+            #     trading_strategy = ma_strategy.present_position()
+            #     position = trading_strategy['ps'].iloc[0]
+            position = 's'
+            if position is 'l' or position is 's':
+                my_order = trader.trading(position, strategy_name)
                 switch = False
                 if my_order is None :
                     switch = True
 
         except Exception as ex:
+            utility.Utils().alerts(ex, 'error')
             print(ex)

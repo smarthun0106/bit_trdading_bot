@@ -3,16 +3,21 @@ import sys
 from os import path
 sys.path.append(path.dirname(path.dirname( path.abspath(__file__))))
 
+import pandas as pd
+import numpy as np
+
 class Logs(object):
     def __init__(self, filled_history, strategy_name):
         self.filled_history = filled_history
         self.strategy_name = strategy_name
 
-    def __call__(self):
-        csv_file_path = "csv_files/"
+        print(self.strategy_name+ '.csv')
+        csv_file_path = "/csv_files/"
         csv_file_name = self.strategy_name + '.csv'
         self.file_name = csv_file_path + csv_file_name
-        return self.file_name
+
+    def __call__(self):
+        pass
 
     ''' record logs when you get position '''
     def entry_logs(self):
@@ -37,17 +42,17 @@ class Logs(object):
         entry_logs = self.entry_logs()
         close_logs = self.close_logs()
         entry_logs.update(close_logs)
-        entry_logs['strategy_name'] = self.strategy_name
-        return entry_logs
+        self.entry_logs['strategy_name'] = self.strategy_name
+        return self.entry_logs
 
     '''
     report related:
     if the csv file name does not exist, make new csv file
     '''
     def new_csv_file(self):
-        logs = self.basic_logs()
-        init_columns = {}
-        for column in logs.keys():
+        print('2')
+        print(self.entry_logs)
+        for column in self.entry_logs.keys():
             init_columns[column] = []
         df = pd.DataFrame(init_columns)
         df.to_csv(self.file_name, mode="a", header=True, index=False)
@@ -58,12 +63,12 @@ class Logs(object):
     check wether content duplicated exists or not. if have same content,
     return True, if not return False
     '''
-    def check_report_content_duplicated(self, report_data):
+    def check_report_content_duplicated(self):
         df = pd.read_csv(self.file_name)
         past_entry_order_id = df["entry_orderID"].iloc[-1]
-        recent_entry_order_id = report_data["entry_orderID"][0]
+        recent_entry_order_id = self.entry_logs["entry_orderID"][0]
         past_close_order_id = df["close_orderID"].iloc[-1]
-        recent_close_order_id = report_data["close_orderID"][0]
+        recent_close_order_id = self.entry_logs["close_orderID"][0]
 
         if past_entry_order_id == recent_entry_order_id: return True
         if past_close_order_id == recent_close_order_id: return True
@@ -77,11 +82,14 @@ class Logs(object):
         return df
 
     ''' report related: save report as csv file '''
-    def report(self, report_data):
+    def report(self):
         try:
-            df = pd.DataFrame(report_data)
+            self.basic_logs()
+            df = pd.read_csv(self.file_name)
+            df = pd.DataFrame(self.entry_logs)
+            print('1')
             df = self.change_korea_time(df)
-            if self.check_report_content_duplicated(report_data):
+            if self.check_report_content_duplicated():
                 return
             else:
                 df.to_csv(self.file_name, mode="a", header=False, index=False)

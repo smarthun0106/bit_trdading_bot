@@ -5,6 +5,7 @@ from settings import TELEGRAM_ERROR_BOT_TOKEN, TELEGRAM_REPORT_BOT_TOKEN
 
 from datetime import datetime
 import pandas as pd
+import requests
 
 class Utils(object):
     ''' make standard time clearer '''
