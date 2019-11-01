@@ -132,7 +132,7 @@ class Trading(object):
         history_text_00 = filled_history[0]['text']
         if bot_text == history_text_01:
             if bot_text == history_text_00:
-                log = Logs(filled_history, strategy_name).report()
+                Logs(filled_history, strategy_name).report()
         return
 
     '''
