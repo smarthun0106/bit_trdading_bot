@@ -1,8 +1,14 @@
 import pandas as pd
 
+
 class Indicators(object):
     def __init__(self):
-        pass
+        # pandas setting
+        pd.set_option('display.unicode.east_asian_width', True)
+        pd.set_option("display.colheader_justify", "right")
+        pd.set_option('expand_frame_repr', True)
+        pd.option_context('display.max_rows', None, 'display.max_columns', None)
+        pd.set_option('display.html.table_schema', True)
 
     '''
     moving_average:

@@ -6,11 +6,14 @@ from utility import utility
 # other modules
 from pprint import pprint
 import time
+import pandas as pd
+pd.set_option('colheader_justify', 'left')
 
 ma_strategy = strategies.MovingAverageStrategy01(
     symbol='XBT', interval='5m', lengths=[8, 20, 35],
-    candle_count=8, short_pattern_value_k=0.8, long_pattern_value_k=0.2,
-    time_delay=0.5, on_screen=True)
+    candle_count=8, short_pattern_ratio=0.8, long_pattern_ratio=0.2,
+    time_delay=1.0,S_location_score=1, L_location_score=2,
+    S_gap=[2, -8], L_gap=[-2, 8], on_screen=True)
 strategy_name = ma_strategy.__class__.__name__
 
 trader = bitmex.Trading(

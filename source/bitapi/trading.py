@@ -22,6 +22,7 @@ class Trading(object):
                  order_type='Limit', stop_type='Market',
                  target_unit_price=20, stop_loss_unit_price=20,
                  time_delay=0.5):
+
         # arguments
         self.symbol = symbol
         self.amount = amount
